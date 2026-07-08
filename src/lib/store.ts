@@ -31,6 +31,7 @@ function decodePortableReceipt(id: string): PolicyReceipt | null {
 }
 
 export async function saveReceipt(receipt: PolicyReceipt): Promise<void> {
+  if (process.env["VERCEL"]) return;
   await mkdir(dataDir, { recursive: true });
   await writeFile(path.join(dataDir, `${encodeURIComponent(receipt.id)}.json`), JSON.stringify(receipt, null, 2));
 }
