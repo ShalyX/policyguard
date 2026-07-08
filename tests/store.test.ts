@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { evaluatePolicy } from "../src/lib/policy";
-import { getReceipt, makePortableReceiptId } from "../src/lib/store";
+import { getReceipt, makeSharePacket } from "../src/lib/store";
 import type { MarketEvidence, ProposedOrder } from "../src/lib/types";
 
 const order: ProposedOrder = {
@@ -28,12 +28,12 @@ const market: MarketEvidence = {
   warnings: [],
 };
 
-test("portable receipt id can recover a receipt without local filesystem state", async () => {
+test("share packet can recover a receipt without local filesystem state", async () => {
   const receipt = evaluatePolicy(order, market);
-  const id = makePortableReceiptId(receipt);
-  const recovered = await getReceipt(id);
+  const packet = makeSharePacket(receipt);
+  const recovered = await getReceipt(receipt.id, packet);
   assert.ok(recovered);
-  assert.equal(recovered.id, id);
+  assert.equal(recovered.id, receipt.id);
   assert.equal(recovered.verdict, receipt.verdict);
   assert.equal(recovered.market.mode, "demo");
 });

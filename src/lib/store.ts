@@ -14,17 +14,14 @@ function fromBase64Url(value: string): string {
   return Buffer.from(value, "base64url").toString("utf8");
 }
 
-export function makePortableReceiptId(receipt: PolicyReceipt): string {
-  const packet = { ...receipt, id: "__PORTABLE_RECEIPT__" };
-  return `${crypto.randomUUID()}.${toBase64Url(JSON.stringify(packet))}`;
+export function makeSharePacket(receipt: PolicyReceipt): string {
+  return toBase64Url(JSON.stringify(receipt));
 }
 
-function decodePortableReceipt(id: string): PolicyReceipt | null {
-  const [, encoded] = id.split(".", 2);
-  if (!encoded) return null;
+export function decodeSharePacket(packet?: string | null): PolicyReceipt | null {
+  if (!packet || !/^[A-Za-z0-9_-]{40,12000}$/.test(packet)) return null;
   try {
-    const decoded = JSON.parse(fromBase64Url(encoded)) as PolicyReceipt;
-    return { ...decoded, id };
+    return JSON.parse(fromBase64Url(packet)) as PolicyReceipt;
   } catch {
     return null;
   }
@@ -33,15 +30,17 @@ function decodePortableReceipt(id: string): PolicyReceipt | null {
 export async function saveReceipt(receipt: PolicyReceipt): Promise<void> {
   if (process.env["VERCEL"]) return;
   await mkdir(dataDir, { recursive: true });
-  await writeFile(path.join(dataDir, `${encodeURIComponent(receipt.id)}.json`), JSON.stringify(receipt, null, 2));
+  await writeFile(path.join(dataDir, `${receipt.id}.json`), JSON.stringify(receipt, null, 2));
 }
 
-export async function getReceipt(id: string): Promise<PolicyReceipt | null> {
-  if (!/^[A-Za-z0-9._-]{20,12000}$/.test(id)) return null;
+export async function getReceipt(id: string, packet?: string | null): Promise<PolicyReceipt | null> {
+  if (!/^[a-f0-9-]{20,80}$/i.test(id)) return null;
   try {
-    const body = await readFile(path.join(dataDir, `${encodeURIComponent(id)}.json`), "utf8");
+    const body = await readFile(path.join(dataDir, `${id}.json`), "utf8");
     return JSON.parse(body) as PolicyReceipt;
   } catch {
-    return decodePortableReceipt(id);
+    const decoded = decodeSharePacket(packet);
+    if (!decoded || decoded.id !== id) return null;
+    return decoded;
   }
 }

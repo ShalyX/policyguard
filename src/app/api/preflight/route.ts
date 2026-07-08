@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { preflightSchema } from "@/lib/request";
 import { getMarketEvidence } from "@/lib/sosovalue";
 import { evaluatePolicy } from "@/lib/policy";
-import { makePortableReceiptId, saveReceipt } from "@/lib/store";
+import { makeSharePacket, saveReceipt } from "@/lib/store";
 
 export async function POST(request: Request) {
   let json: unknown;
@@ -17,9 +17,8 @@ export async function POST(request: Request) {
   }
   const market = await getMarketEvidence(parsed.data.asset);
   const receipt = evaluatePolicy(parsed.data, market);
-  receipt.id = makePortableReceiptId(receipt);
   await saveReceipt(receipt);
-  return NextResponse.json(receipt, { headers: { "cache-control": "no-store" } });
+  return NextResponse.json({ ...receipt, sharePacket: makeSharePacket(receipt) }, { headers: { "cache-control": "no-store" } });
 }
 
 export function GET() {

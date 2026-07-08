@@ -2,9 +2,16 @@ import Link from "next/link";
 import { getReceipt } from "@/lib/store";
 import { notFound } from "next/navigation";
 
-export default async function ReceiptPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ReceiptPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ packet?: string }>;
+}) {
   const { id } = await params;
-  const receipt = await getReceipt(id);
+  const { packet } = await searchParams;
+  const receipt = await getReceipt(id, packet);
   if (!receipt) notFound();
   return (
     <main className="receipt-grid min-h-screen px-6 py-8">
@@ -12,7 +19,11 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
         <Link href="/" className="text-sm text-signal">← Back to PolicyGuard</Link>
         <section className="mt-6 rounded-[2rem] border border-line bg-[#10130d]/95 p-6 shadow-2xl shadow-black/40">
           <div className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
-            <div><p className="font-mono text-sm text-muted">AUDIT RECEIPT / {receipt.id}</p><h1 className="mt-2 text-5xl font-semibold tracking-[-.05em] text-ink">{receipt.verdict}</h1><p className="mt-3 text-muted">Created {new Date(receipt.createdAt).toLocaleString()}</p></div>
+            <div>
+              <p className="font-mono text-sm text-muted">AUDIT RECEIPT / {receipt.id.slice(0, 8)}</p>
+              <h1 className="mt-2 text-5xl font-semibold tracking-[-.05em] text-ink">{receipt.verdict}</h1>
+              <p className="mt-3 text-muted">Created {new Date(receipt.createdAt).toLocaleString()}</p>
+            </div>
             <div className="stamp rounded-2xl border border-signal/70 px-6 py-4 text-center font-mono text-signal"><div className="text-xs">POLICY</div><div className="text-2xl">{receipt.riskLevel.toUpperCase()}</div></div>
           </div>
 
@@ -29,10 +40,17 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
               <p>Price: <b className="text-ink">${receipt.market.price.toLocaleString()}</b></p>
               <p>24h move: <b className="text-ink">{receipt.market.priceChange24hPct.toFixed(2)}%</b></p>
               <p>ETF flow: <b className="text-ink">{receipt.market.etfFlowUsd === null ? "n/a" : `$${Math.round(receipt.market.etfFlowUsd).toLocaleString()}`}</b></p>
+              {receipt.market.endpoints.length > 0 && <p className="mt-3 text-xs text-muted">Sources: {receipt.market.endpoints.join(" · ")}</p>}
               {receipt.market.warnings.map(w => <p key={w} className="mt-3 text-caution">{w}</p>)}
             </Panel>
             <Panel title="Agent thesis"><p>{receipt.proposedOrder.thesis}</p></Panel>
           </div>
+
+          <Panel title="Evidence headlines" className="mt-5">
+            <ul className="space-y-2">
+              {receipt.market.news.slice(0, 5).map((item, index) => <li key={`${item.title}-${index}`} className="border-b border-line/60 pb-2 last:border-0">{item.title}</li>)}
+            </ul>
+          </Panel>
 
           <div className="mt-5 grid gap-3 md:grid-cols-2">
             {receipt.checks.map(c => <div key={c.id} className="rounded-2xl border border-line bg-background/50 p-4"><div className="flex justify-between"><b className="text-ink">{c.label}</b><span className={c.status === "pass" ? "text-signal" : c.status === "fail" ? "text-danger" : "text-caution"}>{c.status}</span></div><p className="mt-2 text-sm leading-6 text-muted">{c.detail}</p></div>)}
@@ -41,7 +59,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
           <Panel title="SoDEX readiness" className="mt-5">
             <p>Status: <b className="text-ink">{receipt.execution.status}</b></p>
             <p className="mt-2">{receipt.execution.reason}</p>
-            {receipt.execution.preparedOrder && <pre className="mt-4 overflow-auto rounded-xl border border-line bg-black/30 p-4 text-xs text-signal">{JSON.stringify(receipt.execution.preparedOrder, null, 2)}</pre>}
+            {receipt.execution.preparedOrder && <pre className="mt-4 max-h-64 overflow-auto rounded-xl border border-line bg-black/30 p-4 text-xs text-signal">{JSON.stringify(receipt.execution.preparedOrder, null, 2)}</pre>}
           </Panel>
         </section>
       </div>

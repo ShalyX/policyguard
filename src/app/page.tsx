@@ -4,6 +4,8 @@ import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import type { PolicyReceipt, Verdict } from "@/lib/types";
 
+type ReceiptResponse = PolicyReceipt & { sharePacket?: string };
+
 const verdictTone: Record<Verdict, string> = {
   APPROVE: "border-signal/70 text-signal",
   REQUIRE_CONFIRMATION: "border-caution/70 text-caution",
@@ -12,7 +14,7 @@ const verdictTone: Record<Verdict, string> = {
 };
 
 export default function Home() {
-  const [receipt, setReceipt] = useState<PolicyReceipt | null>(null);
+  const [receipt, setReceipt] = useState<ReceiptResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [asset, setAsset] = useState("BTC");
@@ -91,13 +93,14 @@ export default function Home() {
   );
 }
 
-function ReceiptCard({ receipt }: { receipt: PolicyReceipt }) {
+function ReceiptCard({ receipt }: { receipt: ReceiptResponse }) {
+  const receiptHref = `/receipts/${receipt.id}${receipt.sharePacket ? `?packet=${receipt.sharePacket}` : ""}`;
   return <div>
     <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-sm text-muted">Receipt #{receipt.id.slice(0,8)}</p><h3 className="mt-1 text-3xl font-semibold text-ink">{receipt.proposedOrder.asset} {receipt.proposedOrder.side} preflight</h3></div><div className={`stamp rounded-xl border px-4 py-2 font-mono text-xl ${verdictTone[receipt.verdict]}`}>{receipt.verdict}</div></div>
     <div className="mt-6 grid gap-3 md:grid-cols-3"><Metric label="Approved notional" value={`$${receipt.approvedNotionalUsd.toLocaleString()}`} /><Metric label="Risk" value={receipt.riskLevel} /><Metric label="Market mode" value={receipt.market.mode} /></div>
     <div className="mt-6 grid gap-3 md:grid-cols-2">{receipt.checks.map(c=><div key={c.id} className="rounded-2xl border border-line bg-background/50 p-4"><div className="flex justify-between gap-3"><b className="text-ink">{c.label}</b><span className={c.status==='pass'?'text-signal':c.status==='fail'?'text-danger':'text-caution'}>{c.status}</span></div><p className="mt-2 text-sm leading-6 text-muted">{c.detail}</p></div>)}</div>
     <div className="mt-6 rounded-2xl border border-line bg-background/60 p-4"><b className="text-ink">Execution status</b><p className="mt-2 text-sm leading-6 text-muted">{receipt.execution.status.toUpperCase()} — {receipt.execution.reason}</p></div>
-    <Link href={`/receipts/${receipt.id}`} className="mt-5 inline-flex rounded-full border border-signal px-5 py-3 text-signal">Open public receipt →</Link>
+    <Link href={receiptHref} className="mt-5 inline-flex rounded-full border border-signal px-5 py-3 text-signal">Open public receipt →</Link>
   </div>
 }
 function Metric({label,value}:{label:string,value:string}){return <div className="rounded-2xl border border-line bg-background/50 p-4"><p className="text-xs uppercase tracking-[.18em] text-muted">{label}</p><p className="mt-2 text-2xl font-semibold text-ink">{value}</p></div>}
