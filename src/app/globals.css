@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+  --background: #070806;
+  --foreground: #f4f1e8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-ink: #f4f1e8;
+  --color-muted: #9c998e;
+  --color-graphite: #11140f;
+  --color-panel: #151911;
+  --color-line: #2c3327;
+  --color-signal: #d7ff63;
+  --color-danger: #ff6b55;
+  --color-caution: #ffd166;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background:
+    radial-gradient(circle at 10% -10%, rgba(215, 255, 99, 0.18), transparent 34rem),
+    radial-gradient(circle at 95% 5%, rgba(255, 107, 85, 0.10), transparent 32rem),
+    #070806;
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection { background: rgba(215,255,99,.28); }
+.receipt-grid { background-image: linear-gradient(rgba(244,241,232,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(244,241,232,.055) 1px, transparent 1px); background-size: 34px 34px; }
+.stamp { transform: rotate(-4deg); }
