@@ -33,6 +33,15 @@ async function fetchJson(url: string, apiKey: string, signal: AbortSignal): Prom
   return res.json();
 }
 
+function cleanText(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function demoEvidence(asset: AssetSymbol, mode: "demo" | "fallback", warnings: string[], started: number): MarketEvidence {
   const p = demoPrices[asset];
   return {
@@ -104,12 +113,12 @@ export async function getMarketEvidence(asset: AssetSymbol): Promise<MarketEvide
       price: numberFrom(market?.price, demo.price),
       priceChange24hPct: change,
       etfFlowUsd: asset === "SOL" ? null : numberFrom(rawEtf?.total_net_inflow, demo.etf ?? 0),
-      news: rawNews.slice(0, 6).map((row) => ({
-        title: String(row.title ?? row.name ?? "Untitled SoSoValue news item"),
-        source: row.source ? String(row.source) : undefined,
+      news: rawNews.map((row) => ({
+        title: cleanText(row.title ?? row.name),
+        source: row.source ? cleanText(row.source) : undefined,
         publishedAt: row.published_at ? String(row.published_at) : row.created_at ? String(row.created_at) : undefined,
         url: row.url ? String(row.url) : undefined,
-      })),
+      })).filter((item) => item.title && !/^untitled\b/i.test(item.title)).slice(0, 6),
       endpoints,
       warnings: [],
     };
