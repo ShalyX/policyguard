@@ -1,20 +1,29 @@
-export function BrandMark({ className = "h-6 w-6" }: { className?: string }) {
+export function BrandMark({
+  className = "h-6 w-6",
+  solid = false,
+}: {
+  className?: string;
+  solid?: boolean;
+}) {
+  if (solid) {
+    return (
+      <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <rect x="0" y="0" width="64" height="64" rx="16" fill="#5E6AD2" />
+        <path d="M18 46V24c0-3.314 2.686-6 6-6h16c3.314 0 6 2.686 6 6v22" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" />
+        <path d="M22 34h20" stroke="#D7DCFF" strokeWidth="3.6" strokeLinecap="round" />
+        <circle cx="32" cy="34" r="4.2" fill="#FFFFFF" />
+        <circle cx="32" cy="34" r="7.2" stroke="#FFFFFF" strokeOpacity="0.35" strokeWidth="2" />
+      </svg>
+    );
+  }
+
   return (
-    <svg
-      className={className}
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden
-    >
-      <rect x="1.5" y="1.5" width="29" height="29" rx="8" fill="#5e6ad2" fillOpacity="0.18" stroke="#7170ff" strokeOpacity="0.55" />
-      {/* gate posts */}
-      <path d="M9 22V11.5C9 10.12 10.12 9 11.5 9h9c1.38 0 2.5 1.12 2.5 2.5V22" stroke="#f7f8f8" strokeWidth="1.6" strokeLinecap="round" />
-      {/* policy bar */}
-      <path d="M11 16.5h10" stroke="#7170ff" strokeWidth="1.8" strokeLinecap="round" />
-      {/* pulse node */}
-      <circle cx="16" cy="16.5" r="2.1" fill="#7170ff" />
-      <circle cx="16" cy="16.5" r="3.4" stroke="#7170ff" strokeOpacity="0.35" />
+    <svg className={className} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <rect x="2" y="2" width="60" height="60" rx="16" fill="#5E6AD2" fillOpacity="0.16" stroke="#7170FF" strokeOpacity="0.55" strokeWidth="2" />
+      <path d="M18 46V24c0-3.314 2.686-6 6-6h16c3.314 0 6 2.686 6 6v22" stroke="#F7F8F8" strokeWidth="3.2" strokeLinecap="round" />
+      <path d="M22 34h20" stroke="#7170FF" strokeWidth="3.6" strokeLinecap="round" />
+      <circle cx="32" cy="34" r="4.2" fill="#7170FF" />
+      <circle cx="32" cy="34" r="7.2" stroke="#7170FF" strokeOpacity="0.35" strokeWidth="2" />
     </svg>
   );
 }

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" fill="none" role="img" aria-label="PolicyGuard">
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#5E6AD2" fill-opacity="0.16" stroke="#7170FF" stroke-opacity="0.55" stroke-width="2"/>
+  <path d="M18 46V24c0-3.314 2.686-6 6-6h16c3.314 0 6 2.686 6 6v22" stroke="#F7F8F8" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M22 34h20" stroke="#7170FF" stroke-width="3.6" stroke-linecap="round"/>
+  <circle cx="32" cy="34" r="4.2" fill="#7170FF"/>
+  <circle cx="32" cy="34" r="7.2" stroke="#7170FF" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="84" y="42" fill="#F7F8F8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="600" letter-spacing="-0.6">PolicyGuard</text>
+</svg>

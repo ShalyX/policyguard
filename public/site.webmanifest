@@ -1,0 +1,21 @@
+{
+  "name": "PolicyGuard",
+  "short_name": "PolicyGuard",
+  "description": "Pre-trade policy gateway for SoDEX agents",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08090a",
+  "theme_color": "#5e6ad2",
+  "icons": [
+    {
+      "src": "/brand/policyguard-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/policyguard-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
