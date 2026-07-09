@@ -45,34 +45,36 @@ export default function Home() {
           </div>
 
           <div className="gate-visual fade-in relative min-h-[380px] rounded-2xl border border-line p-6 sm:min-h-[440px] sm:p-8">
+            <div className="gate-rail hidden sm:block" aria-hidden />
             <div className="relative z-10 flex h-full flex-col justify-between">
               <div className="flex items-center justify-between text-[12px] text-faint">
                 <span className="mono uppercase tracking-[0.16em]">Execution path</span>
-                <span className="mono">t+0 → receipt</span>
+                <span className="mono tabular-nums">t+0 → receipt</span>
               </div>
 
-              <div className="mt-10 space-y-4">
+              <div className="mt-10 space-y-3 sm:pl-4">
                 {[
-                  { label: "Agent order", detail: "BTC LONG · $1,200 · 2×", state: "inbound" },
-                  { label: "SoSoValue packet", detail: "price · ETF flow · news", state: "evidence" },
-                  { label: "Policy engine", detail: "APPROVE · REDUCE · REJECT", state: "gate" },
-                  { label: "SoDEX adapter", detail: "prepare · sign · submit", state: "out" },
+                  { label: "Agent order", detail: "BTC LONG · $1,200 · 2×" },
+                  { label: "SoSoValue packet", detail: "price · ETF flow · news" },
+                  { label: "Policy engine", detail: "APPROVE · REDUCE · REJECT" },
+                  { label: "SoDEX adapter", detail: "prepare · sign · submit" },
                 ].map((row, i) => (
                   <div
                     key={row.label}
-                    className="gate-node flex items-center justify-between rounded-xl border border-line bg-[#0f1011]/90 px-4 py-3.5 backdrop-blur"
-                    style={{ animationDelay: `${i * 80}ms` }}
+                    className="gate-node flex items-center justify-between rounded-xl border border-line bg-[#0f1011]/92 px-4 py-3.5 backdrop-blur"
                   >
-                    <div>
-                      <div className="text-[14px] font-medium text-ink">{row.label}</div>
-                      <div className="mt-0.5 mono text-[12px] text-faint">{row.detail}</div>
+                    <div className="min-w-0">
+                      <div className="text-[13.5px] font-medium tracking-[-0.01em] text-ink">{row.label}</div>
+                      <div className="mt-0.5 mono text-[11px] text-faint">{row.detail}</div>
                     </div>
-                    <div className="mono text-[11px] uppercase tracking-[0.12em] text-accent">{String(i + 1).padStart(2, "0")}</div>
+                    <div className="mono text-[10px] uppercase tracking-[0.14em] text-accent">
+                      {String(i + 1).padStart(2, "0")}
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-8 rounded-xl border border-line bg-black/30 px-4 py-3 mono text-[12px] text-muted">
+              <div className="mt-8 rounded-xl border border-line bg-black/30 px-4 py-3 mono text-[11px] text-muted">
                 POST /api/preflight → verdict + execution receipt
               </div>
             </div>

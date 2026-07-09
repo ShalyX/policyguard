@@ -85,19 +85,122 @@ body {
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse 70% 70% at 50% 45%, black, transparent);
   pointer-events: none;
+  animation: grid-drift 18s linear infinite;
+}
+
+.gate-visual::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: -20%;
+  height: 38%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(113, 112, 255, 0.1),
+    transparent
+  );
+  animation: scan-sweep 4.8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .gate-node {
+  position: relative;
+  z-index: 2;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 50px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  animation: node-in 0.55s ease forwards, node-glow 3.6s ease-in-out infinite;
+}
+
+.gate-node:nth-child(1) { animation-delay: 0.05s, 0s; }
+.gate-node:nth-child(2) { animation-delay: 0.16s, 0.4s; }
+.gate-node:nth-child(3) { animation-delay: 0.28s, 0.8s; }
+.gate-node:nth-child(4) { animation-delay: 0.4s, 1.2s; }
+
+.gate-rail {
+  position: absolute;
+  left: 1.35rem;
+  top: 5.5rem;
+  bottom: 5.5rem;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(113, 112, 255, 0.55),
+    transparent
+  );
+  z-index: 1;
+  overflow: hidden;
+}
+
+.gate-rail::after {
+  content: "";
+  position: absolute;
+  left: -1px;
+  width: 3px;
+  height: 28%;
+  background: #7170ff;
+  box-shadow: 0 0 16px rgba(113, 112, 255, 0.8);
+  animation: rail-pulse 2.4s ease-in-out infinite;
 }
 
 .fade-in {
   animation: fade-up 0.55s ease both;
 }
 
+.receipt {
+  font-feature-settings: "tnum", "cv01", "ss03";
+}
+
+.receipt .mono {
+  font-variant-numeric: tabular-nums;
+}
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes node-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes node-glow {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.08); }
+  50% { border-color: rgba(113, 112, 255, 0.28); }
+}
+
+@keyframes scan-sweep {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  55% { transform: translateY(220%); opacity: 0.7; }
+  100% { transform: translateY(280%); opacity: 0; }
+}
+
+@keyframes rail-pulse {
+  0% { top: 0; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { top: 78%; opacity: 0; }
+}
+
+@keyframes grid-drift {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 48px, 48px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gate-visual::before,
+  .gate-visual::after,
+  .gate-node,
+  .gate-rail::after,
+  .fade-in {
+    animation: none !important;
+  }
+  .gate-node { opacity: 1; }
 }
 
 input, select, textarea, button {
