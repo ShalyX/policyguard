@@ -6,6 +6,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://policyguard-nine.vercel.app"),
   title: "PolicyGuard — Pre-trade policy gateway",
   description:
     "Audit AI-proposed SoDEX orders against SoSoValue market evidence, then prepare or submit with a public audit receipt.",
