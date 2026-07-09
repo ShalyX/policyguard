@@ -72,6 +72,9 @@ export default function DeskPage() {
       const body = await res.json();
       if (!res.ok) throw new Error(body.message || body.error || "preflight_failed");
       setReceipt(body);
+      requestAnimationFrame(() => {
+        document.getElementById("receipt-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
@@ -210,7 +213,7 @@ export default function DeskPage() {
             )}
           </form>
 
-          <div className="surface-elevated min-h-[32rem] rounded-2xl p-5 sm:p-6">
+          <div id="receipt-panel" className="surface-elevated min-h-[32rem] rounded-2xl p-5 sm:p-6">
             {!receipt ? (
               <div className="flex h-full min-h-[28rem] flex-col items-center justify-center text-center">
                 <div className="gate-visual h-28 w-full max-w-sm rounded-xl border border-line" />

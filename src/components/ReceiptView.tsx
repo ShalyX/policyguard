@@ -68,6 +68,16 @@ export function ReceiptView({
           <Row k="client" v={receipt.execution.orderId ?? "—"} mono />
           <Row k="order" v={receipt.execution.sodexOrderId ?? "—"} mono />
           <p className="mt-2 text-[12px] leading-5 text-muted">{receipt.execution.reason}</p>
+          {receipt.execution.sodexOrderId ? (
+            <a
+              href="https://sodex.com"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-2 inline-block text-[11px] text-accent hover:underline"
+            >
+              Verify on SoDEX dashboard →
+            </a>
+          ) : null}
         </Panel>
       </div>
 
