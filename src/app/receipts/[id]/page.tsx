@@ -56,10 +56,18 @@ export default async function ReceiptPage({
             {receipt.checks.map(c => <div key={c.id} className="rounded-2xl border border-line bg-background/50 p-4"><div className="flex justify-between"><b className="text-ink">{c.label}</b><span className={c.status === "pass" ? "text-signal" : c.status === "fail" ? "text-danger" : "text-caution"}>{c.status}</span></div><p className="mt-2 text-sm leading-6 text-muted">{c.detail}</p></div>)}
           </div>
 
-          <Panel title="SoDEX readiness" className="mt-5">
+          <Panel title="SoDEX prepare / submit" className="mt-5">
             <p>Status: <b className="text-ink">{receipt.execution.status}</b></p>
             <p className="mt-2">{receipt.execution.reason}</p>
+            <div className="mt-3 grid gap-2 text-sm md:grid-cols-2">
+              <p>clientOrderId: <b className="text-ink">{receipt.execution.orderId ?? "—"}</b></p>
+              <p>sodexOrderId: <b className="text-ink">{receipt.execution.sodexOrderId ?? "—"}</b></p>
+              <p>submitAttempted: <b className="text-ink">{String(receipt.execution.submitAttempted)}</b></p>
+              <p>HTTP: <b className="text-ink">{receipt.execution.submitHttpStatus ?? "—"}</b></p>
+            </div>
+            {receipt.execution.payloadHash && <p className="mt-3 break-all font-mono text-xs text-signal">payloadHash: {receipt.execution.payloadHash}</p>}
             {receipt.execution.preparedOrder && <pre className="mt-4 max-h-64 overflow-auto rounded-xl border border-line bg-black/30 p-4 text-xs text-signal">{JSON.stringify(receipt.execution.preparedOrder, null, 2)}</pre>}
+            {receipt.execution.responseSnippet && <pre className="mt-3 max-h-40 overflow-auto rounded-xl border border-line bg-black/30 p-4 text-xs text-muted">{receipt.execution.responseSnippet}</pre>}
           </Panel>
         </section>
       </div>

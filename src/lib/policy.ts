@@ -1,4 +1,4 @@
-import type { MarketEvidence, PolicyCheck, PolicyReceipt, ProposedOrder, Verdict, RiskLevel } from "./types";
+import type { MarketEvidence, PolicyCheck, PolicyDecision, ProposedOrder, Verdict, RiskLevel } from "./types";
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -12,7 +12,7 @@ function hasBearishText(text: string): boolean {
   return /(short|sell|bear|downside|outflow|negative|risk|dump|regulat|hack|exploit|reversal)/i.test(text);
 }
 
-export function evaluatePolicy(order: ProposedOrder, market: MarketEvidence): PolicyReceipt {
+export function evaluatePolicy(order: ProposedOrder, market: MarketEvidence): PolicyDecision {
   const checks: PolicyCheck[] = [];
   const reasons: string[] = [];
   let score = 0;
@@ -75,7 +75,7 @@ export function evaluatePolicy(order: ProposedOrder, market: MarketEvidence): Po
   } else checks.push({ id: "news", label: "News conflict scan", status: "pass", detail: "No blocking risk terms found in the sampled headlines." });
 
   if (market.mode !== "live") {
-    checks.push({ id: "source-mode", label: "Live data mode", status: "warn", detail: `Market packet is ${market.mode}; execution cannot be marked submitted.` });
+    checks.push({ id: "source-mode", label: "Live data mode", status: "warn", detail: `Market packet is ${market.mode}; SoSoValue live key recommended for production agent gates.` });
     score += 5;
   } else checks.push({ id: "source-mode", label: "Live data mode", status: "pass", detail: "SoSoValue live adapter returned a packet." });
 
@@ -95,21 +95,6 @@ export function evaluatePolicy(order: ProposedOrder, market: MarketEvidence): Po
   if (verdict === "REDUCE_SIZE") reasons.push("PolicyGuard reduced the order rather than blindly executing the agent proposal.");
   if (verdict === "REJECT") reasons.push("One or more hard policy checks failed; the agent should not trade this order.");
 
-  const canPrepare = verdict !== "REJECT" && approvedNotionalUsd > 0;
-  const sodexConfigured = Boolean(process.env["SODEX_API_KEY"]);
-  const execution = {
-    status: canPrepare && sodexConfigured && market.mode === "live" ? "prepared" as const : "blocked" as const,
-    venue: "SoDEX testnet" as const,
-    reason: canPrepare
-      ? sodexConfigured && market.mode === "live"
-        ? "Order passed policy preflight and is prepared for a SoDEX testnet adapter. Submission remains user-confirmed."
-        : "Order passed policy preflight, but live SoDEX submission is blocked until SODEX_API_KEY and live market mode are configured."
-      : "Policy rejected this order; no SoDEX order is prepared.",
-    preparedOrder: canPrepare
-      ? { market: `${order.asset}-USDC-PERP`, side: order.side, notionalUsd: approvedNotionalUsd, leverage: order.leverage, reduceOnly: false, clientOrderId: `pg-${crypto.randomUUID()}` }
-      : null,
-  };
-
   return {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
@@ -121,6 +106,5 @@ export function evaluatePolicy(order: ProposedOrder, market: MarketEvidence): Po
     requiredAction: verdict === "APPROVE" ? "none" : verdict === "REQUIRE_CONFIRMATION" ? "human_confirmation" : verdict === "REDUCE_SIZE" ? "revise_order" : "do_not_trade",
     reasons,
     checks,
-    execution,
   };
 }

@@ -39,7 +39,41 @@ export type PolicyCheck = {
   detail: string;
 };
 
-export type PolicyReceipt = {
+export type PreparedSodexOrder = {
+  market: string;
+  symbolID: number;
+  side: TradeSide;
+  notionalUsd: number;
+  leverage: number;
+  reduceOnly: boolean;
+  clientOrderId: string;
+  accountID: number | null;
+  markPrice: number;
+  orderType: "MARKET";
+  timeInForce: "IOC";
+  funds: string | null;
+  quantity: string | null;
+  httpBody: Record<string, unknown>;
+  signingType: "newOrder";
+  submitUrl: string;
+  chainId: number;
+  domain: "futures";
+};
+
+export type ExecutionRecord = {
+  status: ExecutionStatus;
+  venue: "SoDEX testnet";
+  reason: string;
+  preparedOrder: PreparedSodexOrder | null;
+  orderId: string | null;
+  sodexOrderId: string | null;
+  payloadHash: string | null;
+  submitAttempted: boolean;
+  submitHttpStatus: number | null;
+  responseSnippet: string | null;
+};
+
+export type PolicyDecision = {
   id: string;
   createdAt: string;
   proposedOrder: ProposedOrder;
@@ -50,17 +84,8 @@ export type PolicyReceipt = {
   requiredAction: "none" | "human_confirmation" | "revise_order" | "do_not_trade";
   reasons: string[];
   checks: PolicyCheck[];
-  execution: {
-    status: ExecutionStatus;
-    venue: "SoDEX testnet";
-    reason: string;
-    preparedOrder: {
-      market: string;
-      side: TradeSide;
-      notionalUsd: number;
-      leverage: number;
-      reduceOnly: boolean;
-      clientOrderId: string;
-    } | null;
-  };
+};
+
+export type PolicyReceipt = PolicyDecision & {
+  execution: ExecutionRecord;
 };

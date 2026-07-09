@@ -12,4 +12,6 @@ export const preflightSchema = z.object({
     maxLeverage: z.coerce.number().min(1).max(20),
     requireHumanConfirmation: z.coerce.boolean(),
   }),
+  /** When true, PolicyGuard may submit prepared orders that still require human confirmation. */
+  confirmSubmit: z.coerce.boolean().optional().default(false),
 });

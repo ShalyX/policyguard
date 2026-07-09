@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sodexHealth } from "@/lib/sodex";
 
 export function GET() {
   return NextResponse.json({
@@ -6,7 +7,7 @@ export function GET() {
     service: "policyguard",
     integrations: {
       sosovalueConfigured: Boolean(process.env["SOSOVALUE_API_KEY"]),
-      sodexConfigured: Boolean(process.env["SODEX_API_KEY"]),
+      sodex: sodexHealth(),
     },
     timestamp: new Date().toISOString(),
   }, { headers: { "cache-control": "no-store" } });

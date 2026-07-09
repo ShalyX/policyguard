@@ -24,10 +24,12 @@ export default function Home() {
   const [sourceAgent, setSourceAgent] = useState("demo-momentum-agent");
   const [thesis, setThesis] = useState("ETF inflows and positive market momentum support a continuation trade, but the agent wants PolicyGuard to check sizing, news conflict, and SoDEX readiness before execution.");
 
+  const [confirmSubmit, setConfirmSubmit] = useState(false);
   const payload = useMemo(() => ({
     asset, side, notionalUsd, leverage, thesis, sourceAgent,
+    confirmSubmit,
     userPolicy: { maxNotionalUsd: 1500, maxLeverage: 3, requireHumanConfirmation: true },
-  }), [asset, side, notionalUsd, leverage, thesis, sourceAgent]);
+  }), [asset, side, notionalUsd, leverage, thesis, sourceAgent, confirmSubmit]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -56,7 +58,7 @@ export default function Home() {
           <h1 className="max-w-4xl text-5xl font-semibold tracking-[-.06em] text-ink md:text-7xl">Pre-trade policy gateway for autonomous SoDEX agents.</h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">Most submissions build AI traders. PolicyGuard is the missing control layer: every agent-proposed order is checked against live SoSoValue evidence, user limits, and execution readiness before it can touch the orderbook.</p>
           <div className="mt-8 grid max-w-2xl grid-cols-3 gap-3 text-sm">
-            {[["1", "Proposed order"], ["2", "SoSoValue evidence"], ["3", "Policy verdict"]].map(([n, t]) => <div key={n} className="rounded-2xl border border-line bg-panel/65 p-4"><div className="font-mono text-signal">0{n}</div><div className="mt-2 text-ink">{t}</div></div>)}
+            {[["1", "Proposed order"], ["2", "SoSoValue evidence"], ["3", "Policy + SoDEX"]].map(([n, t]) => <div key={n} className="rounded-2xl border border-line bg-panel/65 p-4"><div className="font-mono text-signal">0{n}</div><div className="mt-2 text-ink">{t}</div></div>)}
           </div>
         </div>
 
@@ -70,7 +72,11 @@ export default function Home() {
           </div>
           <label className="mt-3 block text-sm text-muted">Source agent<input value={sourceAgent} onChange={e=>setSourceAgent(e.target.value)} className="mt-2 w-full rounded-xl border border-line bg-background p-3 text-ink" /></label>
           <label className="mt-3 block text-sm text-muted">Agent thesis<textarea value={thesis} onChange={e=>setThesis(e.target.value)} rows={5} className="mt-2 w-full rounded-xl border border-line bg-background p-3 text-ink" /></label>
-          <button disabled={loading} className="mt-5 w-full rounded-2xl bg-signal px-5 py-4 font-semibold text-black transition hover:brightness-110 disabled:opacity-60">{loading ? "Checking policy..." : "Preflight proposed SoDEX order"}</button>
+          <label className="mt-4 flex items-start gap-3 rounded-xl border border-line bg-background/50 p-3 text-sm text-muted">
+            <input type="checkbox" checked={confirmSubmit} onChange={e=>setConfirmSubmit(e.target.checked)} className="mt-1" />
+            <span>Confirm SoDEX testnet submit after policy gate (required when human confirmation is on). Without credentials, the order stays <b className="text-ink">prepared</b>.</span>
+          </label>
+          <button disabled={loading} className="mt-5 w-full rounded-2xl bg-signal px-5 py-4 font-semibold text-black transition hover:brightness-110 disabled:opacity-60">{loading ? "Running policy + SoDEX adapter..." : "Preflight + prepare/submit SoDEX order"}</button>
           {error && <p className="mt-3 rounded-xl border border-danger/50 bg-danger/10 p-3 text-sm text-danger">{error}</p>}
         </form>
       </section>
@@ -85,8 +91,8 @@ export default function Home() {
       </section>
 
       <section id="architecture" className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="grid gap-4 md:grid-cols-4">
-          {["POST /api/preflight", "SoSoValue adapter", "Policy engine", "Public receipt"].map((item, i) => <div key={item} className="rounded-3xl border border-line bg-panel/60 p-5"><div className="font-mono text-sm text-signal">0{i+1}</div><div className="mt-8 text-xl font-semibold text-ink">{item}</div></div>)}
+        <div className="grid gap-4 md:grid-cols-5">
+          {["POST /api/preflight", "SoSoValue adapter", "Policy engine", "SoDEX prepare/submit", "Public receipt"].map((item, i) => <div key={item} className="rounded-3xl border border-line bg-panel/60 p-5"><div className="font-mono text-sm text-signal">0{i+1}</div><div className="mt-8 text-xl font-semibold text-ink">{item}</div></div>)}
         </div>
       </section>
     </main>
@@ -99,7 +105,13 @@ function ReceiptCard({ receipt }: { receipt: ReceiptResponse }) {
     <div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-sm text-muted">Receipt #{receipt.id.slice(0,8)}</p><h3 className="mt-1 text-3xl font-semibold text-ink">{receipt.proposedOrder.asset} {receipt.proposedOrder.side} preflight</h3></div><div className={`stamp rounded-xl border px-4 py-2 font-mono text-xl ${verdictTone[receipt.verdict]}`}>{receipt.verdict}</div></div>
     <div className="mt-6 grid gap-3 md:grid-cols-3"><Metric label="Approved notional" value={`$${receipt.approvedNotionalUsd.toLocaleString()}`} /><Metric label="Risk" value={receipt.riskLevel} /><Metric label="Market mode" value={receipt.market.mode} /></div>
     <div className="mt-6 grid gap-3 md:grid-cols-2">{receipt.checks.map(c=><div key={c.id} className="rounded-2xl border border-line bg-background/50 p-4"><div className="flex justify-between gap-3"><b className="text-ink">{c.label}</b><span className={c.status==='pass'?'text-signal':c.status==='fail'?'text-danger':'text-caution'}>{c.status}</span></div><p className="mt-2 text-sm leading-6 text-muted">{c.detail}</p></div>)}</div>
-    <div className="mt-6 rounded-2xl border border-line bg-background/60 p-4"><b className="text-ink">Execution status</b><p className="mt-2 text-sm leading-6 text-muted">{receipt.execution.status.toUpperCase()} — {receipt.execution.reason}</p></div>
+    <div className="mt-6 rounded-2xl border border-line bg-background/60 p-4">
+      <b className="text-ink">SoDEX execution</b>
+      <p className="mt-2 text-sm leading-6 text-muted">{receipt.execution.status.toUpperCase()} — {receipt.execution.reason}</p>
+      {receipt.execution.orderId && <p className="mt-2 font-mono text-xs text-signal">clientOrderId: {receipt.execution.orderId}</p>}
+      {receipt.execution.sodexOrderId && <p className="mt-1 font-mono text-xs text-signal">sodexOrderId: {receipt.execution.sodexOrderId}</p>}
+      {receipt.execution.submitAttempted && <p className="mt-1 text-xs text-muted">submitAttempted · HTTP {receipt.execution.submitHttpStatus ?? "n/a"}</p>}
+    </div>
     <Link href={receiptHref} className="mt-5 inline-flex rounded-full border border-signal px-5 py-3 text-signal">Open public receipt →</Link>
   </div>
 }

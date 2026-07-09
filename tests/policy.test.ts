@@ -27,15 +27,16 @@ const base: ProposedOrder = {
   userPolicy: { maxNotionalUsd: 1500, maxLeverage: 3, requireHumanConfirmation: false },
 };
 
-test("policy engine creates a receipt and never marks demo data as submitted", () => {
-  const receipt = evaluatePolicy(base, market);
-  assert.ok(receipt.id);
-  assert.notEqual(receipt.execution.status, "submitted");
-  assert.equal(receipt.market.mode, "demo");
+test("policy engine creates a decision without execution (execution is attached async)", () => {
+  const decision = evaluatePolicy(base, market);
+  assert.ok(decision.id);
+  assert.ok(decision.verdict);
+  assert.equal(decision.market.mode, "demo");
+  assert.ok(!("execution" in decision) || (decision as { execution?: unknown }).execution === undefined);
 });
 
 test("policy engine rejects hard limit failures", () => {
-  const receipt = evaluatePolicy({ ...base, notionalUsd: 10000, leverage: 10 }, market);
-  assert.equal(receipt.verdict, "REJECT");
-  assert.equal(receipt.approvedNotionalUsd, 0);
+  const decision = evaluatePolicy({ ...base, notionalUsd: 10000, leverage: 10 }, market);
+  assert.equal(decision.verdict, "REJECT");
+  assert.equal(decision.approvedNotionalUsd, 0);
 });

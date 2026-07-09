@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { preflightSchema } from "@/lib/request";
 import { getMarketEvidence } from "@/lib/sosovalue";
 import { evaluatePolicy } from "@/lib/policy";
+import { attachSodexExecution } from "@/lib/sodex";
 import { makeSharePacket, saveReceipt } from "@/lib/store";
+import type { PolicyReceipt } from "@/lib/types";
 
 export async function POST(request: Request) {
   let json: unknown;
@@ -15,8 +17,19 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid_request", issues: parsed.error.flatten() }, { status: 422 });
   }
-  const market = await getMarketEvidence(parsed.data.asset);
-  const receipt = evaluatePolicy(parsed.data, market);
+
+  const { confirmSubmit, ...order } = parsed.data;
+  const market = await getMarketEvidence(order.asset);
+  const decision = evaluatePolicy(order, market);
+  const execution = await attachSodexExecution({
+    order,
+    market,
+    verdict: decision.verdict,
+    approvedNotionalUsd: decision.approvedNotionalUsd,
+    confirmSubmit,
+  });
+
+  const receipt: PolicyReceipt = { ...decision, execution };
   await saveReceipt(receipt);
   return NextResponse.json({ ...receipt, sharePacket: makeSharePacket(receipt) }, { headers: { "cache-control": "no-store" } });
 }
