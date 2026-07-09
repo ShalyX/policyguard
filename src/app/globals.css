@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #070806;
-  --foreground: #f4f1e8;
+  --background: #08090a;
+  --foreground: #f7f8f8;
 }
 
 @theme inline {
@@ -10,27 +10,162 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-ink: #f4f1e8;
-  --color-muted: #9c998e;
-  --color-graphite: #11140f;
-  --color-panel: #151911;
-  --color-line: #2c3327;
-  --color-signal: #d7ff63;
-  --color-danger: #ff6b55;
-  --color-caution: #ffd166;
+  --color-ink: #f7f8f8;
+  --color-ink-2: #d0d6e0;
+  --color-muted: #8a8f98;
+  --color-faint: #62666d;
+  --color-panel: #0f1011;
+  --color-elevated: #191a1b;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-strong: rgba(255, 255, 255, 0.12);
+  --color-accent: #7170ff;
+  --color-accent-deep: #5e6ad2;
+  --color-signal: #27a644;
+  --color-caution: #e8b339;
+  --color-danger: #ef5f4a;
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+
 body {
-  background:
-    radial-gradient(circle at 10% -10%, rgba(215, 255, 99, 0.18), transparent 34rem),
-    radial-gradient(circle at 95% 5%, rgba(255, 107, 85, 0.10), transparent 32rem),
-    #070806;
+  background: #08090a;
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-feature-settings: "cv01", "ss03";
+  -webkit-font-smoothing: antialiased;
 }
 
-::selection { background: rgba(215,255,99,.28); }
-.receipt-grid { background-image: linear-gradient(rgba(244,241,232,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(244,241,232,.055) 1px, transparent 1px); background-size: 34px 34px; }
-.stamp { transform: rotate(-4deg); }
+::selection {
+  background: rgba(113, 112, 255, 0.28);
+  color: #fff;
+}
+
+.surface {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.surface-elevated {
+  background: #191a1b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.hairline {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.display {
+  letter-spacing: -0.04em;
+  font-weight: 500;
+  line-height: 1.02;
+}
+
+.mono {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.gate-visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 70% 20%, rgba(113, 112, 255, 0.16), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255, 255, 255, 0.04), transparent 50%),
+    #0f1011;
+}
+
+.gate-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 45%, black, transparent);
+  pointer-events: none;
+}
+
+.gate-node {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.fade-in {
+  animation: fade-up 0.55s ease both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+input, select, textarea, button {
+  font: inherit;
+}
+
+input:focus, select:focus, textarea:focus, button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(113, 112, 255, 0.45);
+}
+
+.field {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: #f7f8f8;
+  padding: 0.75rem 0.875rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.field:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 8px;
+  background: #5e6ad2;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.8rem 1.1rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-primary:hover {
+  background: #7170ff;
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: #d0d6e0;
+  font-weight: 500;
+  padding: 0.8rem 1.1rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
