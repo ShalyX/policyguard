@@ -64,4 +64,3 @@ POLICYGUARD_URL=http://localhost:3000 npm run smoke
 
 `POST /api/preflight` · `GET /api/receipts/:id` · `GET /api/health`
 
-See [SUBMISSION.md](./SUBMISSION.md) for Wave 3 form answers and demo script.
