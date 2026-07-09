@@ -97,3 +97,9 @@ PolicyGuard audits AI-proposed SoDEX orders against live SoSoValue evidence and 
 Demo: https://policyguard-nine.vercel.app  
 Repo: https://github.com/ShalyX/policyguard  
 Stack: SoSoValue API + SoDEX testnet
+
+## Demo video artifact
+- Local path: `/root/policyguard-demo-video/policyguard-enterprise-demo.mp4`
+- Format: 1920x1080 · 30fps · ~54s · AAC + H.264
+- Live SoDEX order shown in capture: see `receipt-meta.json`
+- Upload to YouTube, then paste URL into Akindo video field.
