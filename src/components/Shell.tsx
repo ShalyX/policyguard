@@ -6,7 +6,7 @@ export function Shell({
   active,
 }: {
   children: React.ReactNode;
-  active?: "home" | "desk" | "receipt";
+  active?: "home" | "desk" | "builder" | "receipt";
 }) {
   return (
     <div className="min-h-screen bg-background text-ink">
@@ -23,13 +23,16 @@ export function Shell({
             <Link href="/desk" className={active === "desk" ? "text-ink" : "hover:text-ink"}>
               Desk
             </Link>
+            <Link href="/builder" className={active === "builder" ? "text-ink" : "hover:text-ink"}>
+              Builder Race
+            </Link>
             <a href="https://github.com/ShalyX/policyguard" target="_blank" rel="noreferrer" className="hover:text-ink">
               GitHub
             </a>
           </nav>
           <div className="flex items-center gap-2">
-            <Link href="/desk" className="btn-primary !px-3.5 !py-2 text-[13px]">
-              Open desk
+            <Link href="/builder" className="btn-primary !px-3.5 !py-2 text-[13px]">
+              Authorize
             </Link>
           </div>
         </div>
@@ -41,7 +44,7 @@ export function Shell({
             <BrandMark className="h-4 w-4 opacity-80" />
             Pre-trade policy gateway for autonomous SoDEX agents.
           </p>
-          <p className="mono">SoSoValue · SoDEX testnet · audit receipts</p>
+          <p className="mono">SoSoValue · SoDEX mainnet Builder Race · audit receipts</p>
         </div>
       </footer>
     </div>
