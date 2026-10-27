@@ -3,6 +3,7 @@ export type TradeSide = "LONG" | "SHORT";
 export type Verdict = "APPROVE" | "REDUCE_SIZE" | "REQUIRE_CONFIRMATION" | "REJECT";
 export type RiskLevel = "low" | "moderate" | "elevated" | "severe";
 export type ExecutionStatus = "prepared" | "blocked" | "submitted";
+export type SodexNetwork = "testnet" | "mainnet";
 
 export type ProposedOrder = {
   asset: AssetSymbol;
@@ -39,6 +40,11 @@ export type PolicyCheck = {
   detail: string;
 };
 
+export type BuilderAttribution = {
+  id: number;
+  fee: number;
+};
+
 export type PreparedSodexOrder = {
   market: string;
   symbolID: number;
@@ -58,11 +64,13 @@ export type PreparedSodexOrder = {
   submitUrl: string;
   chainId: number;
   domain: "futures";
+  network: SodexNetwork;
+  builder: BuilderAttribution | null;
 };
 
 export type ExecutionRecord = {
   status: ExecutionStatus;
-  venue: "SoDEX testnet";
+  venue: "SoDEX testnet" | "SoDEX mainnet";
   reason: string;
   preparedOrder: PreparedSodexOrder | null;
   orderId: string | null;
