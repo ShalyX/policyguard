@@ -220,7 +220,7 @@ export function BuilderRacePanel() {
             >
               {busy ? "Waiting for wallet…" : actionLabel}
             </button>
-            <button type="button" className="btn-secondary" disabled={busy} onClick={() => refresh(address)}>
+            <button type="button" className="btn-ghost" disabled={busy} onClick={() => refresh(address)}>
               Refresh status
             </button>
           </>
