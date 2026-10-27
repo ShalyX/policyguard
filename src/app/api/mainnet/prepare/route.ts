@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
   const userAddress = raw.userAddress;
   if (!isAddress(userAddress)) return NextResponse.json({ error: "invalid_user_address" }, { status: 400 });
 
-  const { userAddress: _ignored, ...orderInput } = raw;
+  const orderInput = { ...raw };
+  delete orderInput.userAddress;
   const parsed = preflightSchema.safeParse(orderInput);
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid_request", issues: parsed.error.flatten() }, { status: 422 });
@@ -75,7 +76,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { confirmSubmit: _confirmSubmit, ...order } = parsed.data;
+  const order = {
+    asset: parsed.data.asset,
+    side: parsed.data.side,
+    notionalUsd: parsed.data.notionalUsd,
+    leverage: parsed.data.leverage,
+    thesis: parsed.data.thesis,
+    sourceAgent: parsed.data.sourceAgent,
+    userPolicy: parsed.data.userPolicy,
+  };
   const market = await getMarketEvidence(order.asset);
   const decision = evaluatePolicy(order, market);
 
